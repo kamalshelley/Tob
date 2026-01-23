@@ -96,9 +96,6 @@ npx playwright test --ui
 
 All rights reserved. Taste of Bharat.
 
-```
-
----
 
 ### 2. Release Notes (for GitHub Releases)
 When you click "Create a new release" on GitHub, use this text.
@@ -106,7 +103,7 @@ When you click "Create a new release" on GitHub, use this text.
 **Tag version:** `v2.0.0`
 **Release title:** `v2.0.0 - The "Ease of Use" Update`
 
-```markdown
+
 ### 🚀 Major Update: Version 2.0
 
 This release focuses on separating content from code to make management easier, fixing mobile UI issues, and introducing automated testing reliability.
