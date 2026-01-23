@@ -44,11 +44,8 @@ const WHATSAPP_API_KEY = "YOUR_KEY_HERE";
 ## 🚀 Installation & Local Development
 
 1. **Clone the repository:**
-```bash
 git clone [https://github.com/kamalshelley/Tob.git](https://github.com/kamalshelley/Tob.git)
 cd Tob
-
-```
 
 
 2. **Run the website:**
