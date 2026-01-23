@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Taste of Bharat | Modern Indian Restaurant in Swindon</title>
+  <meta name="description" content="Experience authentic and modern Indian cuisine at Taste of Bharat, Swindon. Dine-in, takeaway, and delivery available." />
+  <meta name="theme-color" content="#FAFAF9" />
+  <link rel="canonical" href="https://tasteofbharatswindon.co.uk" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Taste of Bharat | Modern Indian Restaurant" />
+  <meta property="og:image" content="images/hero.webp" />
+
+  <link rel="icon" type="image/jpg" href="images/logo.jpg">
+
+  <link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
+  <link rel="preload" href="https://fonts.gstatic.com/s/dmsans/v14/rP2Fp2ywxg089UriC5MHqO0.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Taste of Bharat",
+    "image": "https://tasteofbharatswindon.co.uk/images/hero.webp",
+    "url": "https://tasteofbharatswindon.co.uk",
+    "telephone": "01793316158",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "198 Rodbourne Rd",
+      "addressLocality": "Swindon",
+      "postalCode": "SN2 2AA",
+      "addressCountry": "GB"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 51.5627,
+      "longitude": -1.7956
+    },
+    "servesCuisine": "Indian",
+    "priceRange": "££",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "17:00",
+        "closes": "22:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Saturday", "Sunday"],
+        "opens": "12:00",
+        "closes": "22:00"
+      }
+    ],
+    "menu": "https://tasteofbharatswindon.co.uk/#menu"
+  }
+  </script>
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true">
+    <div style="background:#25D366;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;">✓</div>
+    <span>Item added to order</span>
+  </div>
+
+<header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo">
+          <img src="images/logo.jpg" alt="Taste of Bharat Logo" />
+        </div>
+        <div class="brand-text">
+          <h1>Taste Of Bharat</h1>
+          <div class="brand-meta">
+            <span>Modern Indian Restaurant</span>
+            <div id="statusBadge" class="status-badge loading">
+               <span class="dot"></span> <span id="statusText">...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="links" aria-label="Primary navigation">
+        <a href="#reviews" class="navlink">Reviews</a>
+        <a href="#chef" class="navlink">Chef's Choice</a>
+        <a href="#spin" class="navlink">Spin & Win</a>
+        <a href="#contact" class="navlink">Book Table</a>
+        <a href="#menu" class="btn btn-primary" style="font-size:.85rem;">Menu & Pre-Order</a>
+        <a href="https://www.just-eat.co.uk/restaurants-taste-of-bharat-kimbrey-park/menu" class="btn btn-justeat" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+          Order on Just Eat
+        </a>
+      </nav>
+
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+    <button class="close" id="closeMenu" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="34" height="34" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <a href="#reviews" class="mLink">Reviews</a>
+    <a href="#chef" class="mLink">Chef's Choice</a>
+    <a href="#spin" class="mLink">Spin & Win</a>
+    <a href="#contact" class="mLink">Book a Table</a>
+    <a href="#menu" class="btn btn-primary mLink">Menu & Pre-Order</a>
+    <a href="https://www.just-eat.co.uk/restaurants-taste-of-bharat-kimbrey-park/menu" class="btn btn-justeat mLink" target="_blank" rel="noopener noreferrer">Order on Just Eat</a>
+  </div>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="kicker">Swindon's Finest</div>
+          <h2>Authentic Spice.<br>Modern Soul.</h2>
+          <p>Experience the vibrant flavors of India in a warm, contemporary setting. From sizzling grills to rich curries, everything is crafted with passion.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
+            <a href="#menu" class="btn btn-primary">Menu & Pre-Order</a>
+            <a href="#contact" class="btn btn-outline">Book a Table</a>
+          </div>
+        </div>
+
+        <div class="hero-media">
+          <div class="hero-frame">
+            <img src="images/hero.webp" width="900" height="650" alt="Restaurant ambience" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section offers">
+      <div class="container">
+        <div class="section-title"><h3>Special Offers</h3></div>
+        <div class="offers-grid" id="offersGrid"></div>
+      </div>
+    </section>
+
+    <section class="section social-proof">
+      <div class="container">
+        <div style="color:var(--text-light);text-transform:uppercase;letter-spacing:1px;font-size:.8rem;font-weight:900">Trusted by Locals</div>
+        <div class="stars">★★★★★</div>
+        <div class="quote">"Hands down the best curry in Swindon. The flavors are incredible and the service is always warm and welcoming."</div>
+        <div style="margin-top:.6rem;font-size:.92rem;color:var(--text-muted);font-weight:700">Highly Rated on Google & TripAdvisor</div>
+      </div>
+    </section>
+
+    <section id="reviews" class="section reviews">
+      <div class="container">
+        <div class="reviews-top">
+          <div>
+            <h3 style="margin-bottom:.25rem">Google Reviews</h3>
+            <p style="color:var(--text-muted);font-weight:700">Latest reviews from our happy customers.</p>
+          </div>
+          <div class="reviews-badge" aria-label="Google rating summary">
+            <div class="badge">⭐ <strong id="googleRating">4.9</strong> / 5</div>
+            <div class="badge"><strong id="googleCount">80+</strong> reviews</div>
+            <a class="btn btn-outline" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/place/Taste+of+Bharat/@51.5632502,-1.8025371,17z/data=!4m8!3m7!1s0x487145d94b747959:0x92939de9a8bb7ccb!8m2!3d51.5632469!4d-1.7999622!9m1!1b1!16s%2Fg%2F11xgt6t7s5?entry=ttu&g_ep=EgoyMDI2MDEyMS4wIKXMDSoASAFQAw%3D%3D">Read on Google</a>
+          </div>
+        </div>
+
+        <div id="googleReviews" class="review-grid" aria-live="polite">
+          <div class="review skeleton"><div class="skeleton-line" style="width:60%"></div><div class="skeleton-line" style="width:30%"></div><div class="skeleton-line"></div><div class="skeleton-line" style="width:80%"></div></div>
+           <div class="review skeleton"><div class="skeleton-line" style="width:60%"></div><div class="skeleton-line" style="width:30%"></div><div class="skeleton-line"></div><div class="skeleton-line" style="width:80%"></div></div>
+           <div class="review skeleton"><div class="skeleton-line" style="width:60%"></div><div class="skeleton-line" style="width:30%"></div><div class="skeleton-line"></div><div class="skeleton-line" style="width:80%"></div></div>
+           <div class="review skeleton"><div class="skeleton-line" style="width:60%"></div><div class="skeleton-line" style="width:30%"></div><div class="skeleton-line"></div><div class="skeleton-line" style="width:80%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="section">
+      <div class="container">
+        <div class="section-title">
+          <h3>Our Menu</h3>
+          <div class="direct-order">
+            <h4>Ordering Directly?</h4>
+            <p style="color:var(--text-muted);font-weight:700">Skip the fees. <strong>Collection or Dine-in Pre-order.</strong><br>Add items to cart below & pay at the restaurant.</p>
+          </div>
+        </div>
+        <div class="allergen">OUR FOOD MAY CONTAIN ALLERGENS: NUTS, DAIRY, GLUTEN, MUSTARD, FISH, SOYA, CRUSTACEANS.<br>PLEASE SPEAK TO STAFF REGARDING DIETARY REQUIREMENTS.</div>
+        <div class="filters">
+          <span class="label">Highlight Allergens (Click to Dim):</span>
+          <button class="fbtn" data-filter="D" type="button">D - Dairy</button>
+          <button class="fbtn" data-filter="G" type="button">G - Gluten</button>
+          <button class="fbtn" data-filter="N" type="button">N - Nuts</button>
+          <button class="fbtn" data-filter="F" type="button">F - Fish</button>
+          <button class="fbtn" data-filter="S" type="button">S - Soya</button>
+          <button class="fbtn" data-filter="P" type="button">P - Prawns</button>
+        </div>
+        <div class="menu-wrap">
+          <aside class="cats" id="categoryList" aria-label="Menu categories"></aside>
+          <div>
+            <label for="menuSearch" class="label" style="display:block;text-align:left;margin-bottom:.5rem">Search menu</label>
+            <input id="menuSearch" class="search" type="text" placeholder="Search Butter Chicken, Biryani..." autocomplete="off" />
+            <div id="menuGrid" class="grid" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="spin" class="section white">
+      <div class="container" style="text-align:center">
+        <h3>Can't Decide?</h3>
+        <p style="color:var(--text-muted);font-weight:700">Let fate choose your feast.</p>
+
+        <div class="spin" aria-label="Spin slots">
+          <div class="slot"><label>Starter</label><div id="slotStarter" class="spin-item spin-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7.58 2 4 5.58 4 10v2h16v-2c0-4.42-3.58-8-8-8z"/><path d="M12 2v-1"/><rect x="2" y="12" width="20" height="2" rx="1"/></svg></div></div>
+          <div class="slot"><label>Main</label><div id="slotMain" class="spin-item spin-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7.58 2 4 5.58 4 10v2h16v-2c0-4.42-3.58-8-8-8z"/><path d="M12 2v-1"/><rect x="2" y="12" width="20" height="2" rx="1"/></svg></div></div>
+          <div class="slot"><label>Side / Bread</label><div id="slotSide" class="spin-item spin-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7.58 2 4 5.58 4 10v2h16v-2c0-4.42-3.58-8-8-8z"/><path d="M12 2v-1"/><rect x="2" y="12" width="20" height="2" rx="1"/></svg></div></div>
+        </div>
+
+        <button class="btn btn-primary" id="spinBtn" type="button">Pick My Dinner</button>
+        <div id="spinMessage" class="spin-msg">Spin 3 times to unlock a discount! (Spins: <span id="spinCount">0</span>)</div>
+      </div>
+    </section>
+
+    <section id="chef" class="section">
+      <div class="container pairbox">
+        <h3 style="font-size:2rem;margin-bottom:.5rem">Chef's Recommendation</h3>
+        <p style="color:var(--text-muted);font-weight:700">Select a main, and we'll suggest the perfect accompaniments.</p>
+        <div class="pairpanel">
+          <label for="pairingSelect" style="display:block;margin-bottom:.5rem;font-weight:900">Select your Main Dish:</label>
+          <select id="pairingSelect" class="select">
+            <option value="">-- Choose a Dish --</option>
+            <option>Butter Chicken</option>
+            <option>Lamb Rogan Josh</option>
+            <option>Railway Lamb Curry</option>
+            <option>Fish Moilee</option>
+            <option>Paneer Butter Masala</option>
+            <option>Saag Paneer</option>
+            <option>Dal Makhani</option>
+            <option>Channa Masala</option>
+            <option>Chicken Dum Biryani</option>
+            <option>Grandmas Chicken Curry</option>
+            <option>Kadai Paneer</option>
+            <option>Patiyala Lamb Chop</option>
+          </select>
+          <div id="pairingResult" class="pairres">
+            <div style="text-align:center;margin:.7rem 0;color:var(--color-accent);font-weight:900">PERFECT MATCH</div>
+            <div class="sg">
+              <div class="sc"><span>Best Bread/Rice</span><div id="sugSide">Garlic Naan</div></div>
+              <div class="sc"><span>Best Starter</span><div id="sugStart">Onion Bhaji</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="section gallery">
+      <div class="container">
+        <div class="section-title">
+          <h3>Visual Feast</h3>
+          <p>A glimpse into our kitchen</p>
+        </div>
+        <div class="ggrid">
+          <div class="gitem glarge"><img src="images/feast.webp" alt="Indian feast" loading="lazy" /></div>
+          <div class="gitem gtall"><img src="images/Starters.webp" alt="Crispy starters" loading="lazy" /></div>
+          <div class="gitem gstd"><img src="images/paneer.webp" alt="Paneer dish" loading="lazy" /></div>
+          <div class="gitem gstd"><img src="images/dessert.webp" alt="Indian dessert" loading="lazy" /></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="info">
+          <div class="formwrap">
+            <div id="formContainer">
+              <h3>Reserve Your Table</h3>
+              <span class="sub">Book instantly via Email.</span>
+              <form id="bookingForm">
+                <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Full Name</label><input type="text" name="name" class="control" required placeholder="e.g. John Doe"></div>
+                <div class="row2" style="margin-top:1rem">
+                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Date</label><input type="date" name="date" class="control" required></div>
+                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Time (24h)</label><input type="time" name="time" class="control" required></div>
+                </div>
+                <div class="row2" style="margin-top:1rem">
+                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Guests</label><input type="number" name="guests" class="control" value="2" min="1" required></div>
+                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Phone</label><input type="tel" name="phone" class="control" required placeholder="07..."></div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;margin-top:1.2rem">Confirm Booking</button>
+              </form>
+            </div>
+            <div id="successMessage" class="success">
+              <div class="tick">✓</div><h3>Booking Submitted!</h3><p style="color:var(--text-muted);font-weight:700">We will call you shortly to confirm.</p><button id="bookAnother" class="btn btn-outline" type="button" style="margin-top:1rem">Book Another</button>
+            </div>
+          </div>
+          <div class="hours">
+            <h3>Visit Us</h3>
+            <div style="display:flex;flex-direction:column;gap:.9rem;color:var(--text-muted);font-weight:700">
+              <div style="display:flex;gap:.7rem;align-items:flex-start">
+                <div style="min-width:40px;height:40px;border-radius:50%;background:#FFF4E5;display:flex;align-items:center;justify-content:center;color:var(--color-accent)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                <span>198 Rodbourne Rd, Swindon SN2 2AA</span>
+              </div>
+              <div style="display:flex;gap:.7rem;align-items:flex-start">
+                <div style="min-width:40px;height:40px;border-radius:50%;background:#FFF4E5;display:flex;align-items:center;justify-content:center;color:var(--color-accent)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+                <span><a href="tel:01793316158" style="text-decoration:underline">01793 316158</a></span>
+              </div>
+            </div>
+            <div class="hourslist">
+              <div class="hr"><span>Monday</span><span style="color:#999">Closed</span></div>
+              <div class="hr"><span>Tuesday — Friday</span><span>17:00 — 22:00</span></div>
+              <div class="hr"><span>Saturday</span><span>12:00 — 14:00, 17:00 — 22:00</span></div>
+              <div class="hr"><span>Sunday</span><span>12:00 — 14:00, 17:00 — 22:00</span></div>
+            </div>
+            
+            <div class="map-wrapper">
+              <iframe 
+                title="Taste of Bharat Location"
+                class="map-frame"
+                src="https://maps.google.com/maps?q=198%20Rodbourne%20Rd,%20Swindon%20SN2%202AA&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade" 
+                allowfullscreen>
+              </iframe>
+              <div class="map-overlay">
+                <div class="mo-content">
+                  <strong>Taste of Bharat</strong>
+                  <span>198 Rodbourne Rd</span>
+                  <a href="https://www.google.com/maps/dir//198+Rodbourne+Rd,+Swindon+SN2+2AA" target="_blank" class="btn-directions">
+                    Get Directions <span>→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="cartFloat" class="cart-float" role="button" tabindex="0" aria-label="Open cart">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-7-4h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2z"></path><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+    <span><span id="cartCount">0</span> Items</span>
+  </div>
+  
+  <div class="mbb">
+    <a href="tel:01793316158" class="call">Call Now</a>
+    <a href="#menu" class="menu">View Menu</a>
+  </div>
+
+  <div id="cartModal" class="cart-modal" aria-hidden="true">
+    <div class="cart" role="dialog" aria-modal="true" aria-label="Your order">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h3>Your Order</h3><button id="closeCart" style="background:none;border:none;font-size:1.6rem;cursor:pointer" aria-label="Close cart">×</button>
+      </div>
+      <div id="cartItemsList" style="margin-bottom:1.4rem"></div>
+      <div id="cartTotalDisplay" class="total">Total: £0.00</div>
+      
+      <form id="cartForm">
+        <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Order Type</label><select class="control" name="service_type" required style="background:#fff"><option value="Collection">Collection</option><option value="Dine-in Pre-order">Dine-in Pre-order</option></select></div>
+        <div class="form-group" style="margin-top:1rem"><label style="font-weight:900;display:block;margin-bottom:.35rem">Name</label><input class="control" name="name" required placeholder="Your Name"></div>
+        <div class="form-group" style="margin-top:1rem"><label style="font-weight:900;display:block;margin-bottom:.35rem">Phone</label><input class="control" name="phone" required placeholder="07..."></div>
+        <div class="form-group" style="margin-top:1rem"><label style="font-weight:900;display:block;margin-bottom:.35rem">Pickup/Dine Time (24h)</label><input type="time" class="control" name="time" required></div>
+        <p style="font-size:.9rem;color:var(--text-muted);font-weight:700;margin-top:1rem">Payment will be collected at the restaurant.</p>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:.8rem">Submit Order</button>
+      </form>
+      
+      <div id="cartSuccess" style="display:none;text-align:center;padding:1.5rem 0">
+        <div class="tick">✓</div><h3>Order Received!</h3><p style="color:var(--text-muted);font-weight:700">Thank you. We have received your order details.</p><p style="font-size:.9rem;color:#666;font-weight:700">We will call you shortly to confirm.</p><button id="closeSuccess" class="btn btn-outline" type="button" style="margin-top:1rem">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="backToTop" aria-label="Back to top">↑</button>
+
+  <footer>
+    <div class="container">
+      <div class="social"><a href="https://www.instagram.com/tasteofbharat_swindon" target="_blank" class="ig" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="https://www.facebook.com/share/1AG4QmmaMx" target="_blank" class="fb" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a></div>
+      <p>© <span id="year"></span> Taste Of Bharat. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
