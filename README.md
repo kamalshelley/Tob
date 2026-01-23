@@ -125,4 +125,3 @@ This release focuses on separating content from code to make management easier, 
 * Implemented `.gitignore` to keep the repo clean.
 * Refactored `app.js` to support dual-notification (Email + WhatsApp).
 
-```
