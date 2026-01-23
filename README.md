@@ -1,10 +1,4 @@
-Here are the professional **README** and **Release Notes** files tailored for your project.
 
-You can copy these directly into your GitHub repository.
-
-### 1. Create a file named `README.md`
-
-This is the front page of your repository.
 
 ```markdown
 # 🍛 Taste of Bharat - Modern Restaurant Website
