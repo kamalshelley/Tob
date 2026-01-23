@@ -1,6 +1,5 @@
 
 
-```markdown
 # 🍛 Taste of Bharat - Modern Restaurant Website
 
 A fully responsive, modern frontend website for **Taste of Bharat**, an Indian restaurant in Swindon. This project features dynamic menu rendering, gamification, live opening status, and automated E2E testing.
@@ -35,9 +34,8 @@ You do not need to touch the code logic. Open `data.js`:
 To enable WhatsApp alerts, open `app.js`:
 ```javascript
 // app.js - Line 8
-const WHATSAPP_API_KEY = "YOUR_KEY_HERE"; 
+const WHATSAPP_API_KEY = "YOUR_KEY_HERE";
 
-```
 
 *Get your key by messaging `I allow callmebot to send me messages` to the CallMeBot number on WhatsApp.*
 
