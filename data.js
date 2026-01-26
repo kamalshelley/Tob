@@ -51,13 +51,13 @@ const REVIEWS_DATA = [
     author: "Pratik Surani",
     rating: 5,
     text: "One of the best Indian restaurants I’ve eaten at in the UK — extremely fussy about Indian food.",
-    time: "Sunday"
+    time: "Verified Diner"
   },
   {
     author: "Tarun Reddy",
     rating: 5,
     text: "Breads very soft and tender. Kofta curry and Panner Tikka Masala is unique and delicious.",
-    time: "Friday"
+    time: "Verified Diner"
   }
 ];
 

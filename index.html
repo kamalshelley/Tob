@@ -156,7 +156,7 @@
         <div style="color:var(--text-light);text-transform:uppercase;letter-spacing:1px;font-size:.8rem;font-weight:900">Trusted by Locals</div>
         <div class="stars">★★★★★</div>
         <div class="quote">"Hands down the best curry in Swindon. The flavors are incredible and the service is always warm and welcoming."</div>
-        <div style="margin-top:.6rem;font-size:.92rem;color:var(--text-muted);font-weight:700">Highly Rated on Google & TripAdvisor</div>
+        <div style="margin-top:.6rem;font-size:.92rem;color:var(--text-muted);font-weight:700">Highly Rated on Google & JustEat</div>
       </div>
     </section>
 
@@ -279,44 +279,104 @@
     <section id="contact" class="contact">
       <div class="container">
         <div class="info">
+          
           <div class="formwrap">
             <div id="formContainer">
               <h3>Reserve Your Table</h3>
-              <span class="sub">Book instantly via Email.</span>
+              <span class="sub">Book instantly online. No account required.</span>
+              
               <form id="bookingForm">
-                <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Full Name</label><input type="text" name="name" class="control" required placeholder="e.g. John Doe"></div>
-                <div class="row2" style="margin-top:1rem">
-                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Date</label><input type="date" name="date" class="control" required></div>
-                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Time (24h)</label><input type="time" name="time" class="control" required></div>
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" name="name" class="control" required placeholder="e.g. John Doe">
                 </div>
-                <div class="row2" style="margin-top:1rem">
-                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Guests</label><input type="number" name="guests" class="control" value="2" min="1" required></div>
-                  <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Phone</label><input type="tel" name="phone" class="control" required placeholder="07..."></div>
+
+                <div class="row2" style="margin-top:1.2rem">
+                  <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" id="bookingDate" class="control" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Time</label>
+                    <select name="time" id="bookingTime" class="control" required style="cursor:pointer;">
+                      <option value="" disabled selected>Select Time</option>
+                      </select>
+                  </div>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width:100%;margin-top:1.2rem">Confirm Booking</button>
+
+                <div class="guest-widget-container" style="margin: 2rem 0; padding: 1.5rem; background:#FAFAFA; border-radius:16px; text-align:center;">
+                  <label style="margin-bottom:1rem; display:block; color:#888;">Number of Guests</label>
+                  <div id="guest-visuals" class="guest-visuals" style="height:40px; margin-bottom:10px;"></div>
+                  <div class="guest-controls">
+                    <button type="button" id="guestMinus" class="guest-btn" aria-label="Decrease guests">−</button>
+                    <span id="guestCountDisplay">2</span>
+                    <button type="button" id="guestPlus" class="guest-btn" aria-label="Increase guests">+</button>
+                  </div>
+                  <input type="hidden" name="guests" id="guestsInput" value="2">
+                </div>
+
+                <div class="form-group">
+                  <label>Phone Number</label>
+                  <input type="tel" name="phone" class="control" required placeholder="07...">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1.5rem; height:54px; font-size:1rem;">Confirm Booking</button>
               </form>
             </div>
+
             <div id="successMessage" class="success">
-              <div class="tick">✓</div><h3>Booking Submitted!</h3><p style="color:var(--text-muted);font-weight:700">We will call you shortly to confirm.</p><button id="bookAnother" class="btn btn-outline" type="button" style="margin-top:1rem">Book Another</button>
+              <div class="tick">✓</div>
+              <h3>Booking Submitted!</h3>
+              <p style="color:var(--text-muted);font-weight:700">We will call you shortly to confirm.</p>
+              <button id="bookAnother" class="btn btn-outline" type="button" style="margin-top:1rem">Book Another</button>
             </div>
           </div>
+
           <div class="hours">
             <h3>Visit Us</h3>
-            <div style="display:flex;flex-direction:column;gap:.9rem;color:var(--text-muted);font-weight:700">
-              <div style="display:flex;gap:.7rem;align-items:flex-start">
-                <div style="min-width:40px;height:40px;border-radius:50%;background:#FFF4E5;display:flex;align-items:center;justify-content:center;color:var(--color-accent)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+            
+            <div class="contact-detail">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </div>
+              <div class="contact-text">
+                <strong>Location</strong>
                 <span>198 Rodbourne Rd, Swindon SN2 2AA</span>
               </div>
-              <div style="display:flex;gap:.7rem;align-items:flex-start">
-                <div style="min-width:40px;height:40px;border-radius:50%;background:#FFF4E5;display:flex;align-items:center;justify-content:center;color:var(--color-accent)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
-                <span><a href="tel:01793316158" style="text-decoration:underline">01793 316158</a></span>
+            </div>
+
+            <div class="contact-detail">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div class="contact-text">
+                <strong>Reservation Line</strong>
+                <a href="tel:01793316158">01793 316158</a>
               </div>
             </div>
+
             <div class="hourslist">
-              <div class="hr"><span>Monday</span><span style="color:#999">Closed</span></div>
-              <div class="hr"><span>Tuesday — Friday</span><span>17:00 — 22:00</span></div>
-              <div class="hr"><span>Saturday</span><span>12:00 — 14:00, 17:00 — 22:00</span></div>
-              <div class="hr"><span>Sunday</span><span>12:00 — 14:00, 17:00 — 22:00</span></div>
+              <div class="hr">
+                <span class="hr-day">Monday</span>
+                <span class="hr-dots"></span>
+                <span class="hr-time">Closed</span>
+              </div>
+              <div class="hr">
+                <span class="hr-day">Tuesday — Friday</span>
+                <span class="hr-dots"></span>
+                <span class="hr-time">17:00 — 22:00</span>
+              </div>
+              <div class="hr">
+                <span class="hr-day">Saturday</span>
+                <span class="hr-dots"></span>
+                <span class="hr-time">12:00 — 14:00, 17:00 — 22:00</span>
+              </div>
+              <div class="hr">
+                <span class="hr-day">Sunday</span>
+                <span class="hr-dots"></span>
+                <span class="hr-time">12:00 — 14:00, 17:00 — 22:00</span>
+              </div>
             </div>
             
             <div class="map-wrapper">
@@ -367,7 +427,14 @@
         <div class="form-group"><label style="font-weight:900;display:block;margin-bottom:.35rem">Order Type</label><select class="control" name="service_type" required style="background:#fff"><option value="Collection">Collection</option><option value="Dine-in Pre-order">Dine-in Pre-order</option></select></div>
         <div class="form-group" style="margin-top:1rem"><label style="font-weight:900;display:block;margin-bottom:.35rem">Name</label><input class="control" name="name" required placeholder="Your Name"></div>
         <div class="form-group" style="margin-top:1rem"><label style="font-weight:900;display:block;margin-bottom:.35rem">Phone</label><input class="control" name="phone" required placeholder="07..."></div>
-        <div class="form-group" style="margin-top:1rem"><label style="font-weight:900;display:block;margin-bottom:.35rem">Pickup/Dine Time (24h)</label><input type="time" class="control" name="time" required></div>
+        
+        <div class="form-group" style="margin-top:1rem">
+            <label style="font-weight:900;display:block;margin-bottom:.35rem">Pickup/Dine Time</label>
+            <select name="time" id="orderTime" class="control" required style="background-color:#fff; cursor:pointer;">
+               <option value="" disabled selected>Select Time</option>
+               </select>
+        </div>
+
         <p style="font-size:.9rem;color:var(--text-muted);font-weight:700;margin-top:1rem">Payment will be collected at the restaurant.</p>
         <button type="submit" class="btn btn-primary" style="width:100%;margin-top:.8rem">Submit Order</button>
       </form>
@@ -386,9 +453,21 @@
       <p>© <span id="year"></span> Taste Of Bharat. All rights reserved.</p>
     </div>
   </footer>
+  
+  <div id="fomo-toast" class="fomo-toast hidden"></div>
+  
+  <div id="upsell-overlay" class="upsell-overlay hidden">
+    <div class="upsell-card">
+      <div class="upsell-header">
+        <span>🔥 Complete your meal?</span>
+        <button id="closeUpsell">×</button>
+      </div>
+      <div id="upsell-content">
+        </div>
+    </div>
+  </div>
 
   <script src="data.js"></script>
-  
   <script src="app.js"></script>
 </body>
 </html>

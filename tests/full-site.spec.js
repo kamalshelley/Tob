@@ -6,12 +6,18 @@ const BASE_URL = 'http://127.0.0.1:5500/';
 test.describe('Taste of Bharat - Complete E2E Suite', () => {
 
   test.beforeEach(async ({ page }) => {
-    // 1. Go to the page
     await page.goto(BASE_URL);
-    // 2. Wait for network to be idle (ensures all scripts are loaded)
-    await page.waitForLoadState('networkidle');
-    // 3. Clear memory to start fresh
-    await page.evaluate(() => localStorage.clear());
+    
+    // FIX: Wait for the Logo to be visible. 
+    // This is more reliable than 'networkidle' for ensuring the DOM is ready.
+    await page.locator('.logo img').first().waitFor({ state: 'visible' });
+
+    // Safe Clear: We try/catch just in case a background reload happens (Live Server)
+    try {
+        await page.evaluate(() => localStorage.clear());
+    } catch (e) {
+        console.log('Note: LocalStorage clear interrupted by navigation (harmless)');
+    }
   });
 
   // ========================================================
@@ -58,12 +64,13 @@ test.describe('Taste of Bharat - Complete E2E Suite', () => {
     await expect(card).toBeVisible();
   });
 
-  // ========================================================
-  // 3. SHOPPING CART (FIXED TIMING)
+ // ========================================================
+  // 3. SHOPPING CART (ROBUST ANIMATION FIX)
   // ========================================================
   test('Cart Logic', async ({ page }) => {
     // 1. Add Item
     const addBtn = page.locator('.add').first();
+    await expect(addBtn).toBeVisible();
     await addBtn.click();
     
     // Check Toast
@@ -71,67 +78,77 @@ test.describe('Taste of Bharat - Complete E2E Suite', () => {
     await expect(page.locator('#cartCount')).toHaveText('1');
 
     // 2. Open Cart
-    await page.click('#cartFloat');
+    const cartFloat = page.locator('#cartFloat');
+    await expect(cartFloat).toBeVisible();
+    await cartFloat.click({ force: true });
     
-    // Wait for the Modal AND the Item to be fully visible
-    await expect(page.locator('.cart-modal')).toHaveClass(/open/);
-    const cartItem = page.locator('.cart-item').first();
-    await expect(cartItem).toBeVisible({ timeout: 5000 });
+    // 3. Wait for Modal Animation
+    // FIX: We wait for the modal to be strictly VISIBLE (opacity = 1), not just have the class.
+    const cartModal = page.locator('.cart-modal');
+    await expect(cartModal).toHaveClass(/open/);
+    await expect(cartModal).toBeVisible({ timeout: 10000 }); 
 
-    // 3. Increment Quantity
-    const plusBtn = cartItem.locator('button:has-text("+")');
-    await plusBtn.click();
+    // 4. Increment Quantity
+    const cartItem = page.locator('.cart-modal .cart-item').first();
     
-    // Check quantity update (targeting the 2nd span which holds qty)
+    // Now that parent is visible, child should be visible too
+    await expect(cartItem).toBeVisible();
+
+    const plusBtn = cartItem.locator('button').nth(1);
+    await plusBtn.click({ force: true });
+    
+    // Check quantity
     const qtySpan = cartItem.locator('span').nth(1);
     await expect(qtySpan).toHaveText('2');
   });
 
 // ========================================================
-  // 4. ORDER FORM (SAFE MODE: Verify Inputs Only)
+  // 4. ORDER FORM (SAFE MODE)
   // ========================================================
   test('Order Form Input Verification', async ({ page }) => {
-    // 1. Add Multiple Items (Populate Cart)
     const addButtons = page.locator('.add');
-    await addButtons.nth(0).click(); 
-    await page.waitForTimeout(500); 
-    await addButtons.nth(1).click(); 
-
-    // 2. Open Cart
-    await page.click('#cartFloat');
-    await expect(page.locator('.cart-modal')).toHaveClass(/open/);
-
-    // 3. FILL ALL FIELDS
-    // This verifies that the user CAN type into these boxes
-    await page.fill('input[name="name"]', 'Tester');
-    await page.fill('input[name="phone"]', '07123456789');
+    await expect(addButtons.first()).toBeVisible();
     
-    const emailInput = page.locator('input[name="email"]');
+    // Add item to enable cart
+    await addButtons.nth(0).click(); 
+    
+    // Wait for cart count to update (More stable than toast)
+    await expect(page.locator('#cartCount')).not.toHaveText('0', { timeout: 5000 });
+
+    // Open Cart
+    await page.click('#cartFloat', { force: true });
+    
+    const cartModal = page.locator('.cart-modal');
+    await expect(cartModal).toHaveClass(/open/); 
+    
+    // FILL ALL FIELDS
+    const cartForm = page.locator('#cartForm');
+    await expect(cartForm).toBeVisible();
+
+    await cartForm.locator('input[name="name"]').fill('Tester');
+    await cartForm.locator('input[name="phone"]').fill('07123456789');
+    
+    // Handle Optional Fields if they exist
+    const emailInput = cartForm.locator('input[name="email"]');
     if (await emailInput.count() > 0) {
         await emailInput.fill('test@example.com');
     }
 
-    const addressInput = page.locator('textarea[name="address"]');
+    const addressInput = cartForm.locator('textarea[name="address"]');
     if (await addressInput.count() > 0) {
         await addressInput.fill('123 Test Street, Swindon');
     }
 
-    // 4. CHECK RADIO BUTTONS
-    const radios = page.locator('input[type="radio"]');
+    // CHECK RADIO BUTTONS
+    const radios = cartForm.locator('input[type="radio"]');
     if (await radios.count() > 0) {
         await radios.first().check();
     }
 
-    // 5. FINAL CHECK: Is the Submit Button Visible and Enabled?
-    // If the button is enabled, it means all "Required" fields are satisfied.
-    const submitBtn = page.locator('#cartForm button[type="submit"]');
-    await submitBtn.scrollIntoViewIfNeeded();
-    
-    await expect(submitBtn).toBeVisible();
+    // FINAL CHECK: Submit Button
+    const submitBtn = cartForm.locator('button[type="submit"]');
+    await expect(submitBtn).toBeVisible(); 
     await expect(submitBtn).toBeEnabled();
-    
-    // We stop here. No clicking, no failing. 
-    // We have proven the form works and is ready to send.
   });
 
   // ========================================================

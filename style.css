@@ -528,3 +528,526 @@ footer{background:#111;color:#888;padding:3.25rem 0;text-align:center;font-size:
   font-size: 1.2em;
   line-height: 0.5;
 }
+
+/* =========================================
+   FOMO Social Proof Notifications
+   ========================================= */
+.fomo-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: white;
+    color: #333;
+    padding: 12px 20px;
+    /* Uses your brand orange color - change if needed */
+    border-left: 5px solid #ff6b35; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    z-index: 1000;
+    font-family: 'Poppins', sans-serif;
+    
+    /* Animation Initial State */
+    transform: translateY(100px); /* Start hidden below screen */
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 320px;
+}
+
+/* State: Visible */
+.fomo-toast.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Image styling inside the toast */
+.fomo-toast img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circle shape */
+    object-fit: cover;
+    border: 2px solid #eee;
+}
+
+/* Text styling inside the toast */
+.fomo-toast div strong {
+    display: block;
+    color: #222;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.fomo-toast div span {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* Hide completely when not in use */
+.hidden {
+    display: none;
+}
+
+/* =========================================
+   FOMO Icon & Mobile Fixes
+   ========================================= */
+
+/* 1. The CSS-only Logo (Replaces the <img> tag) */
+/* =========================================
+   FOMO Icon & Mobile Fixes
+   ========================================= */
+
+/* The CSS-only Logo (Premium Look) */
+.fomo-icon {
+    width: 50px;  /* Slightly larger */
+    height: 50px;
+    min-width: 50px;
+    /* 1. Premium Gradient Background */
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b35 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* 2. Refined Typography */
+    font-family: 'Poppins', sans-serif; /* Ensure it matches your site font */
+    font-weight: 700;  /* Bold and authoritative */
+    font-size: 1.3rem; /* Larger text */
+    letter-spacing: 1px; /* Adds elegance */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle depth to text */
+
+    /* 3. Premium Border & Glowing Shadow */
+    border: 2px solid rgba(255, 255, 255, 0.9); /* crisp, semi-transparent white border */
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.6); /* A nice, soft orange glow */
+}
+
+
+
+/* 2. Mobile Alignment Fix */
+@media (max-width: 600px) {
+    .fomo-toast {
+        left: 50%; /* Move to center of screen */
+        bottom: 20px;
+        width: 90%; /* Take up 90% of screen width */
+        max-width: 350px; /* Don't get too big */
+        
+        /* Centering Trick: Combine the center alignment with the slide animation */
+        /* Start State (Hidden) */
+        transform: translate(-50%, 100px); 
+    }
+
+    .fomo-toast.visible {
+        /* End State (Visible) - Keep -50% X to stay centered, 0 Y to slide up */
+        transform: translate(-50%, 0);
+    }
+}
+
+/* =========================================
+   Airbnb-Style Guest Selector
+   ========================================= */
+.guest-widget-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 10px 0;
+}
+
+.guest-widget-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* The Row of "People" */
+.guest-visuals {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Align feet */
+    gap: 2px; /* Tight grouping like the screenshot */
+    height: 50px; /* Fixed height to prevent jumping */
+    margin-bottom: 5px;
+    overflow: hidden; /* Hide if too many for one line */
+    flex-wrap: wrap; 
+}
+
+/* Individual Character Animation */
+.guest-char {
+    font-size: 2rem; /* Big Emojis */
+    line-height: 1;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+}
+
+@keyframes popIn {
+    0% { transform: scale(0) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Controls Section */
+.guest-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+/* The Big Number */
+#guestCountDisplay {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #333;
+    font-family: sans-serif; /* Clean font like Airbnb */
+    min-width: 60px;
+}
+
+/* Circular Buttons */
+.guest-btn {
+    width: 44px; 
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: white;
+    font-size: 1.5rem;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.guest-btn:hover {
+    border-color: #333;
+    color: #000;
+}
+
+.guest-btn:active {
+    transform: scale(0.9);
+    background-color: #f7f7f7;
+}
+
+.guest-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: #eee;
+}
+
+/* --- Fix for Dropdowns to match Text Inputs --- */
+select.control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #F9F9F9;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9772B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem !important; /* Make room for the arrow */
+  height: 58px; /* Force height to match text inputs */
+  cursor: pointer;
+}
+
+/* Ensure the date input matches height too if needed */
+input[type="date"].control, 
+input[type="time"].control {
+  height: 58px;
+  display: block;
+}
+
+/* =========================================
+   PREMIUM CONTACT SECTION UPGRADE
+   ========================================= */
+
+.contact {
+  background: linear-gradient(to bottom, #FAFAF9 0%, #F5F5F4 100%);
+  padding: 5rem 0;
+  position: relative;
+}
+
+/* Container Grid */
+.info {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr; /* Form gets slightly more space */
+  gap: 4rem;
+  align-items: start;
+}
+
+/* --- LEFT: The Reservation Form (Premium Card) --- */
+.formwrap {
+  background: #ffffff;
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); /* Soft, deep shadow */
+  border: 1px solid rgba(0,0,0,0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold Accent Line at Top */
+.formwrap::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--color-accent), #c26115);
+}
+
+.formwrap h3 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.formwrap .sub {
+  display: block;
+  font-family: "DM Sans", sans-serif;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+/* Premium Inputs */
+.control {
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #E5E5E5;
+  background: #FAFAFA;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.control:focus {
+  background: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(217, 119, 43, 0.15);
+  outline: none;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 0.6rem;
+  font-weight: 800;
+}
+
+/* --- RIGHT: Visit Us (Clean & Editorial) --- */
+.hours h3 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Address & Phone Blocks */
+.contact-detail {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  transition: transform 0.2s ease;
+}
+
+.contact-detail:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(217, 119, 43, 0.1); /* Light Orange */
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-text strong {
+  display: block;
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem;
+  color: #000;
+}
+
+.contact-text span, .contact-text a {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* Premium Hours List (The "Menu" Look) */
+.hourslist {
+  margin-top: 2.5rem;
+  border: none;
+  padding: 0;
+}
+
+.hr {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* Aligns text to dotted line */
+  padding: 0.8rem 0;
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+/* The Dotted Leader Effect */
+.hr-day {
+  font-weight: 700;
+  color: var(--color-primary);
+  position: relative;
+  z-index: 1;
+  padding-right: 10px;
+  background: var(--bg-body); /* Masks the dots behind text */
+}
+
+.hr-dots {
+  flex-grow: 1;
+  border-bottom: 2px dotted #ccc;
+  position: relative;
+  bottom: 6px; /* Adjusts vertical alignment of dots */
+  margin: 0 5px;
+  opacity: 0.5;
+}
+
+.hr-time {
+  font-weight: 500;
+  color: var(--text-muted);
+  padding-left: 10px;
+  background: var(--bg-body);
+  white-space: nowrap;
+}
+
+/* Refined Map */
+.map-wrapper {
+  margin-top: 2.5rem;
+  border-radius: 20px;
+  border: 4px solid #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  height: 320px;
+}
+
+/* Responsive Fixes */
+@media (max-width: 900px) {
+  .info { grid-template-columns: 1fr; gap: 3rem; }
+  .formwrap { padding: 1.5rem; }
+  .hr { font-size: 0.95rem; }
+}
+
+/* =========================================
+   FIX: Visit Us Section Alignment
+   ========================================= */
+
+/* 1. Make the Icon and Text sit side-by-side */
+.contact-detail {
+  display: flex;           /* Flexbox aligns items in a row */
+  align-items: center;     /* Vertically centers them */
+  gap: 1.2rem;             /* Space between icon and text */
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  transition: transform 0.2s ease;
+}
+
+.contact-detail:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+}
+
+/* 2. Style the Circle around the Icon */
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(217, 119, 43, 0.1); /* Light Orange background */
+  color: var(--color-accent);          /* Orange Icon color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;                      /* Prevents circle from getting squashed */
+}
+
+/* 3. Style the Text next to it */
+.contact-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-text strong {
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem;
+  color: #000;
+  line-height: 1.2;
+}
+
+.contact-text span, 
+.contact-text a {
+  font-size: 0.95rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* 4. Fix Hours List Alignment */
+.hourslist {
+  margin-top: 2.5rem;
+  border: none;
+  padding: 0;
+}
+
+.hr {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; 
+  padding: 0.8rem 0;
+  border-bottom: none; /* Removes old dashed lines if present */
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.hr-day {
+  font-weight: 700;
+  color: var(--color-primary);
+  position: relative;
+  z-index: 1;
+  padding-right: 10px;
+  background: var(--bg-body); /* White background masks the dots */
+}
+
+.hr-dots {
+  flex-grow: 1;
+  border-bottom: 2px dotted #ccc;
+  position: relative;
+  bottom: 6px; 
+  margin: 0 5px;
+  opacity: 0.5;
+}
+
+.hr-time {
+  font-weight: 500;
+  color: var(--text-muted);
+  padding-left: 10px;
+  background: var(--bg-body);
+  white-space: nowrap;
+}

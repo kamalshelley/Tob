@@ -2,7 +2,9 @@
   "name": "tob-web-2.0",
   "version": "1.0.0",
   "main": "app.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test --retries=1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

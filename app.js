@@ -5,11 +5,22 @@
 // =========================
 const RESTAURANT_EMAIL = "tob.swindon@gmail.com"; 
 
-// 🔴 PASTE YOUR CALLMEBOT API KEY HERE (From the WhatsApp setup step)
-const WHATSAPP_API_KEY = "123456"; // <--- CHANGE THIS
-const MY_PHONE_NUMBER = "447771447915"; // Your number
+// 🔴 PASTE YOUR API KEYS HERE
+const WHATSAPP_API_KEY = "1972032"; 
+const MY_PHONE_NUMBER = "447771447915"; 
 
-/* NOTE: MENU_DATA, REVIEWS_DATA, SPECIAL_OFFERS come from data.js */
+// 🔴 PASTE YOUR 3 GOOGLE SHEET CSV LINKS HERE
+const SHEET_MENU_URL    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZbAFYD3sVnAi-f-ocPfvHFGfja5fcBMmZOhJwHhvdVefahmRCwGHBGnnPnzr-MVbDNi4pbAYAEVG-/pub?gid=0&single=true&output=csv"; 
+const SHEET_OFFERS_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZbAFYD3sVnAi-f-ocPfvHFGfja5fcBMmZOhJwHhvdVefahmRCwGHBGnnPnzr-MVbDNi4pbAYAEVG-/pub?gid=739546087&single=true&output=csv"; 
+const SHEET_REVIEWS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZbAFYD3sVnAi-f-ocPfvHFGfja5fcBMmZOhJwHhvdVefahmRCwGHBGnnPnzr-MVbDNi4pbAYAEVG-/pub?gid=2124700402&single=true&output=csv"; 
+
+/* =========================================
+   DATA BRIDGE & INITIALIZATION
+   ========================================= */
+let menuData = (typeof MENU_DATA !== 'undefined') ? MENU_DATA : [];
+let specialOffers = (typeof SPECIAL_OFFERS !== 'undefined') ? SPECIAL_OFFERS : [];
+let reviewsData = (typeof REVIEWS_DATA !== 'undefined') ? REVIEWS_DATA : [];
+let grouped = new Map(); 
 
 // =========================
 // Utilities
@@ -18,50 +29,97 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
 // =========================
-// Advanced: Live Restaurant Status
+// GOOGLE SHEETS PARSER
 // =========================
-function checkRestaurantStatus() {
-  const now = new Date();
-  const day = now.getDay(); 
-  const hour = now.getHours();
-  const minute = now.getMinutes();
-  const currentTime = hour + (minute / 60);
-  const badge = document.getElementById("statusBadge");
-  const text = document.getElementById("statusText");
-  if (!badge || !text) return;
+async function fetchAllData() {
+    console.log("📊 Fetching live data...");
+    Promise.all([
+        fetchSheet(SHEET_MENU_URL, 'menu'),
+        fetchSheet(SHEET_OFFERS_URL, 'offers'),
+        fetchSheet(SHEET_REVIEWS_URL, 'reviews')
+    ]).then(() => console.log("✅ All live data sync complete."));
+}
 
-  let isOpen = false;
-  // Mon: Closed | Tue-Fri: 17-22 | Sat-Sun: 12-14 & 17-22
-  if (day === 1) isOpen = false;
-  else if (day >= 2 && day <= 5) {
-    if (currentTime >= 17 && currentTime < 22) isOpen = true;
-  } else {
-    if ((currentTime >= 12 && currentTime < 14) || (currentTime >= 17 && currentTime < 22)) isOpen = true;
-  }
+async function fetchSheet(url, type) {
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Sheet ${type} not found`);
+    const text = await res.text();
+    const rows = text.split('\n').slice(1);
+    const clean = (str) => str ? str.replace(/^"|"$/g, '').trim() : "";
 
-  badge.classList.remove("loading", "open", "closed");
-  if (isOpen) {
-    badge.classList.add("open"); text.textContent = "Open Now";
-  } else {
-    badge.classList.add("closed"); text.textContent = "Closed";
-  }
+    const data = rows.map(row => {
+        const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        if (type === 'menu') {
+            if (cols.length < 4) return null;
+            return {
+                category: clean(cols[0]),
+                name: clean(cols[1]),
+                desc: clean(cols[2]),
+                price: clean(cols[3]).includes('£') ? clean(cols[3]) : `£${clean(cols[3])}`,
+                codes: clean(cols[4]) ? clean(cols[4]).split('|') : []
+            };
+        } else if (type === 'offers') {
+            if (cols.length < 2) return null;
+            return { title: clean(cols[0]), description: clean(cols[1]) };
+        } else if (type === 'reviews') {
+            if (cols.length < 3) return null;
+            return {
+                author: clean(cols[0]),
+                rating: parseInt(clean(cols[1])) || 5,
+                text: clean(cols[2]),
+                time: clean(cols[3])
+            };
+        }
+    }).filter(item => item !== null);
+
+    if (data.length > 0) {
+        if (type === 'menu') { menuData = data.filter(i => i.name); refreshApp(); } 
+        else if (type === 'offers') { specialOffers = data; renderOffers(); } 
+        else if (type === 'reviews') { reviewsData = data; loadStaticReviews(); }
+    }
+  } catch (err) { console.warn(`⚠️ Failed to load ${type}.`, err); }
 }
 
 // =========================
-// Render Offers
+// CORE APP LOGIC
 // =========================
+function refreshApp() {
+  grouped = new Map();
+  for (const item of menuData) {
+    const cat = item.category || "General";
+    if (!grouped.has(cat)) grouped.set(cat, []);
+    grouped.get(cat).push(item);
+  }
+  renderCategories();
+  renderMenu();
+}
+
 function renderOffers() {
   const grid = document.getElementById('offersGrid');
-  if(!grid || typeof SPECIAL_OFFERS === 'undefined') return;
-  
-  // Clean render - no link injection
-  grid.innerHTML = SPECIAL_OFFERS.map(offer => `
+  if(!grid || specialOffers.length === 0) return;
+  grid.innerHTML = specialOffers.map(offer => `
     <div class="offer"><b>${offer.title}</b><span>${offer.description}</span></div>
   `).join('');
 }
 
+function loadStaticReviews() {
+  const listEl = $("#googleReviews");
+  if(!listEl || reviewsData.length === 0) return;
+  const frag = document.createDocumentFragment();
+  reviewsData.forEach(rv => {
+      const div = document.createElement("div");
+      div.className = "review";
+      div.innerHTML = `<strong>${rv.author}</strong><div style="color:var(--color-accent);margin-top:.25rem">${"⭐".repeat(rv.rating)}</div><p>${rv.text}</p><small>${rv.time}</small>`;
+      frag.appendChild(div);
+  });
+  listEl.style.opacity = '0';
+  setTimeout(() => { listEl.innerHTML = ""; listEl.appendChild(frag); listEl.style.opacity = '1'; }, 200);
+}
+
 // =========================
-// Mobile Menu Logic
+// MENU & UI LOGIC
 // =========================
 const mobileMenu = $("#mobileMenu");
 const hamburger = $("#hamburger");
@@ -73,31 +131,21 @@ function setMenu(open) {
   hamburger.setAttribute("aria-expanded", String(open));
   if (open) closeMenu.focus(); else hamburger.focus();
 }
-hamburger.addEventListener("click", () => setMenu(true));
-closeMenu.addEventListener("click", () => setMenu(false));
+if(hamburger) hamburger.addEventListener("click", () => setMenu(true));
+if(closeMenu) closeMenu.addEventListener("click", () => setMenu(false));
 $$(".mLink").forEach(a => a.addEventListener("click", () => setMenu(false)));
 
-// =========================
-// Menu Rendering
-// =========================
-const grouped = new Map();
-if (typeof MENU_DATA !== 'undefined') {
-  for (const item of MENU_DATA) {
-    const cat = item.category || "General";
-    if (!grouped.has(cat)) grouped.set(cat, []);
-    grouped.get(cat).push(item);
-  }
-}
-
-const categories = Array.from(grouped.keys());
 const categoryList = $("#categoryList");
 const menuGrid = $("#menuGrid");
 const searchInput = $("#menuSearch");
-let activeCategory = categories.includes("Non-Veg Starters") ? "Non-Veg Starters" : categories[0];
+let activeCategory = "Non-Veg Starters"; 
 let activeFilters = new Set();
 let menuExpanded = false; 
 
 function renderCategories() {
+  const categories = Array.from(grouped.keys());
+  if (!grouped.has(activeCategory) && categories.length > 0) activeCategory = categories[0];
+  
   const frag = document.createDocumentFragment();
   categoryList.innerHTML = "";
   for (const cat of categories) {
@@ -110,9 +158,7 @@ function renderCategories() {
       searchInput.value = "";
       renderCategories();
       renderMenu();
-      if (window.innerWidth < 900) {
-        menuGrid.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      if (window.innerWidth < 900) menuGrid.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     frag.appendChild(b);
   }
@@ -122,9 +168,9 @@ function renderCategories() {
 function renderMenu() {
   const q = searchInput.value.trim().toLowerCase();
   menuGrid.innerHTML = "";
-
+  
   if (q) {
-    const list = MENU_DATA.filter(it => (it.name + " " + (it.desc || "")).toLowerCase().includes(q));
+    const list = menuData.filter(it => (it.name + " " + (it.desc || "")).toLowerCase().includes(q));
     if (!list.length) {
       menuGrid.innerHTML = '<div style="color:var(--text-muted);font-weight:800;grid-column:1/-1;text-align:center;">No items found.</div>';
       return;
@@ -164,7 +210,7 @@ function renderMenu() {
 
 function createCard(item) {
   const dim = activeFilters.size > 0 && item.codes && item.codes.some(c => activeFilters.has(c));
-  const idx = MENU_DATA.indexOf(item);
+  const idx = menuData.indexOf(item); 
   const card = document.createElement("div");
   card.className = "card" + (dim ? " dim" : "");
   let tagHtml = item.codes && item.codes.length ? `<div class="tags">${item.codes.map(c => `[${c}]`).join(" ")}</div>` : "";
@@ -190,42 +236,40 @@ $$(".fbtn").forEach(b => {
 searchInput.addEventListener("input", () => renderMenu());
 
 // =========================
-// Spin & Win
+// SPIN & WIN
 // =========================
 const codeKeys = ["MASALA", "ROGAN", "KORMA", "BALTI", "MADRAS", "VINDALOO", "TANDOORI"];
 let spinCount = 0;
-
 const today = new Date();
-const dayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
-const todaysCode = codeKeys[dayIndex] + today.getDate();
+const todaysCode = codeKeys[(today.getDay() === 0 ? 6 : today.getDay() - 1)] + today.getDate();
 const savedCode = localStorage.getItem('tob_discount');
 
 if (savedCode && savedCode !== todaysCode) localStorage.removeItem('tob_discount');
 
 if (localStorage.getItem('tob_discount') === todaysCode) {
   const msg = $("#spinMessage");
-  msg.innerHTML = `🎉 DISCOUNT UNLOCKED! Use Code: <strong>${todaysCode}</strong><br><span style="font-size:.9rem;color:#666;font-weight:800">Call the restaurant to order & quote this code!</span>`;
-  msg.classList.add("unlocked");
-  $("#spinBtn").disabled = true;
-  $("#spinBtn").textContent = "You've already won!";
+  if(msg) {
+      msg.innerHTML = `🎉 DISCOUNT UNLOCKED! Use Code: <strong>${todaysCode}</strong><br><span style="font-size:.9rem;color:#666;font-weight:800">Call to order & quote this code!</span>`;
+      msg.classList.add("unlocked");
+      $("#spinBtn").disabled = true;
+      $("#spinBtn").textContent = "You've already won!";
+  }
 }
 
 function spinDinner() {
   const slots = [$("#slotStarter"), $("#slotMain"), $("#slotSide")];
+  if(!slots[0]) return;
   slots.forEach(slot => { slot.classList.remove("spin-placeholder"); slot.innerHTML = ""; });
 
   const pools = [
-    MENU_DATA.filter(i => ["Snack Bites", "Tandoori Khazana", "Non-Veg Starters"].includes(i.category)),
-    MENU_DATA.filter(i => ["Veg Curries", "Non-Veg Curries", "Biryanis", "Combo Meals"].includes(i.category)),
-    MENU_DATA.filter(i => ["Tandoor Breads", "Sides"].includes(i.category))
+    menuData.filter(i => ["Snack Bites", "Tandoori Khazana", "Non-Veg Starters"].includes(i.category)),
+    menuData.filter(i => ["Veg Curries", "Non-Veg Curries", "Biryanis", "Combo Meals"].includes(i.category)),
+    menuData.filter(i => ["Tandoor Breads", "Sides"].includes(i.category))
   ];
   let ticks = 0;
   const timer = setInterval(() => {
     for (let i = 0; i < 3; i++) {
-      if (pools[i].length) {
-        const r = pools[i][Math.floor(Math.random() * pools[i].length)];
-        slots[i].textContent = r.name;
-      }
+      if (pools[i].length) slots[i].textContent = pools[i][Math.floor(Math.random() * pools[i].length)].name;
     }
     ticks++;
     if (ticks > 14) {
@@ -235,7 +279,7 @@ function spinDinner() {
       if (spinCount >= 3 && !localStorage.getItem('tob_discount')) {
         localStorage.setItem('tob_discount', todaysCode);
         const msg = $("#spinMessage");
-        msg.innerHTML = `🎉 DISCOUNT UNLOCKED! Use Code: <strong>${todaysCode}</strong><br><span style="font-size:.9rem;color:#666;font-weight:800">Call the restaurant to order & quote this code!</span>`;
+        msg.innerHTML = `🎉 DISCOUNT UNLOCKED! Use Code: <strong>${todaysCode}</strong>`;
         msg.classList.add("unlocked");
         $("#spinBtn").disabled = true;
         $("#spinBtn").textContent = "You've already won!";
@@ -243,18 +287,21 @@ function spinDinner() {
     }
   }, 90);
 }
-$("#spinBtn").addEventListener("click", spinDinner);
+if($("#spinBtn")) $("#spinBtn").addEventListener("click", spinDinner);
 
-$("#pairingSelect").addEventListener("change", () => {
-  const main = $("#pairingSelect").value;
-  if (!main) { $("#pairingResult").classList.remove("active"); return; }
-  $("#sugSide").textContent = "Garlic Naan";
-  $("#sugStart").textContent = "Onion Bhaji";
-  $("#pairingResult").classList.add("active");
-});
+const pairSelect = $("#pairingSelect");
+if(pairSelect) {
+    pairSelect.addEventListener("change", () => {
+      const main = pairSelect.value;
+      if (!main) { $("#pairingResult").classList.remove("active"); return; }
+      $("#sugSide").textContent = "Garlic Naan";
+      $("#sugStart").textContent = "Onion Bhaji";
+      $("#pairingResult").classList.add("active");
+    });
+}
 
 // =========================
-// Cart & Order Logic
+// CART & ORDER LOGIC
 // =========================
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem("tob_cart") || "[]"); } catch (e) { cart = []; }
@@ -269,12 +316,13 @@ function saveCart() { localStorage.setItem("tob_cart", JSON.stringify(cart)); }
 function showToast() { toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 2400); }
 
 function addToCart(index) {
-  const itemToAdd = MENU_DATA[index];
+  const itemToAdd = menuData[index];
   const existingItem = cart.find(i => i.name === itemToAdd.name);
   if (existingItem) existingItem.qty = (existingItem.qty || 1) + 1;
   else cart.push({ ...itemToAdd, qty: 1 });
   saveCart(); updateCartUI(); showToast();
 }
+window.addToCart = addToCart;
 
 function removeFromCart(index) {
   if (cart[index].qty > 1) cart[index].qty--;
@@ -282,10 +330,12 @@ function removeFromCart(index) {
   saveCart(); updateCartUI();
   if (cart.length === 0) { cartFloat.style.display = "none"; closeCart(); }
 }
+window.removeFromCart = removeFromCart;
 
 function incrementItem(index) {
   cart[index].qty++; saveCart(); updateCartUI();
 }
+window.incrementItem = incrementItem;
 
 function updateCartUI() {
   const totalQty = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
@@ -327,138 +377,112 @@ function updateCartUI() {
 
 function openCart() { cartModal.classList.add("open"); cartModal.setAttribute("aria-hidden", "false"); }
 function closeCart() { cartModal.classList.remove("open"); cartModal.setAttribute("aria-hidden", "true"); }
-$("#closeCart").addEventListener("click", closeCart);
-cartFloat.addEventListener("click", openCart);
+window.closeCart = closeCart;
 
-// =======================================================
-// HELPER: Send WhatsApp via CallMeBot (Background)
-// =======================================================
+if($("#closeCart")) $("#closeCart").addEventListener("click", closeCart);
+if(cartFloat) cartFloat.addEventListener("click", openCart);
+
 function sendSilentWhatsApp(message) {
   const text = encodeURIComponent(message);
   const url = `https://api.callmebot.com/whatsapp.php?phone=${MY_PHONE_NUMBER}&text=${text}&apikey=${WHATSAPP_API_KEY}`;
   fetch(url, { mode: 'no-cors' }).catch(e => console.error("WhatsApp failed", e));
 }
 
-// =========================
-// ORDER SUBMISSION (Email + Silent WhatsApp)
-// =========================
 const cartForm = $("#cartForm");
-cartForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  
-  const btn = cartForm.querySelector('button[type="submit"]');
-  const txt = btn.textContent;
-  btn.textContent = "Sending...";
-  btn.disabled = true;
+if(cartForm) {
+    cartForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = cartForm.querySelector('button[type="submit"]');
+      const txt = btn.textContent;
+      btn.textContent = "Sending...";
+      btn.disabled = true;
 
-  const formData = new FormData(cartForm);
-  const type = formData.get("service_type");
-  const name = formData.get("name");
-  const phone = formData.get("phone");
-  const time = formData.get("time");
+      const formData = new FormData(cartForm);
+      const type = formData.get("service_type");
+      const name = formData.get("name");
+      const phone = formData.get("phone");
+      const time = formData.get("time");
 
-  let total = 0;
-  const itemsStr = cart.map(i => {
-    const p = parseFloat(i.price.replace("£", ""));
-    const q = i.qty || 1;
-    total += p * q;
-    return `${q}x ${i.name} (£${(p * q).toFixed(2)})`;
-  }).join("\n");
+      let total = 0;
+      const itemsStr = cart.map(i => {
+        const p = parseFloat(i.price.replace("£", ""));
+        const q = i.qty || 1;
+        total += p * q;
+        return `${q}x ${i.name} (£${(p * q).toFixed(2)})`;
+      }).join("\n");
 
-  const fullOrderText = `NEW ORDER 🍛\nType: ${type}\nName: ${name}\nPhone: ${phone}\nTime: ${time}\n\nITEMS:\n${itemsStr}\n\nTOTAL: £${total.toFixed(2)}`;
+      const fullOrderText = `NEW ORDER 🍛\nType: ${type}\nName: ${name}\nPhone: ${phone}\nTime: ${time}\n\nITEMS:\n${itemsStr}\n\nTOTAL: £${total.toFixed(2)}`;
+      formData.append("_captcha", "false");
+      formData.append("_subject", `New Order (${type}) - ${name}`);
+      formData.append("order_details", fullOrderText);
 
-  formData.append("_captcha", "false");
-  formData.append("_subject", `New Order (${type}) - ${name}`);
-  formData.append("order_details", fullOrderText);
+      try {
+        const res = await fetch(`https://formsubmit.co/ajax/${RESTAURANT_EMAIL}`, {
+          method: "POST", body: formData, headers: { "Accept": "application/json" }
+        });
 
-  try {
-    const res = await fetch(`https://formsubmit.co/ajax/${RESTAURANT_EMAIL}`, {
-      method: "POST", body: formData, headers: { "Accept": "application/json" }
+        if (res.ok) {
+          sendSilentWhatsApp(fullOrderText);
+          cartForm.style.display = "none";
+          cartItemsList.style.display = "none";
+          cartTotalDisplay.style.display = "none";
+          $("#cartSuccess").style.display = "block";
+          cart = [];
+          saveCart();
+          cartFloat.style.display = "none";
+        } else {
+          throw new Error("Email failed");
+        }
+      } catch (err) {
+        alert("Error sending order. Please call the restaurant.");
+        btn.textContent = txt;
+        btn.disabled = false;
+      }
     });
-
-    if (res.ok) {
-      sendSilentWhatsApp(fullOrderText);
-      cartForm.style.display = "none";
-      cartItemsList.style.display = "none";
-      cartTotalDisplay.style.display = "none";
-      $("#cartSuccess").style.display = "block";
-      cart = [];
-      saveCart();
-      cartFloat.style.display = "none";
-    } else {
-      throw new Error("Email failed");
-    }
-  } catch (err) {
-    alert("Error sending order. Please call the restaurant.");
-    btn.textContent = txt;
-    btn.disabled = false;
-  }
-});
-
-// =========================
-// BOOKING SUBMISSION (Email + Silent WhatsApp)
-// =========================
-const bookingForm = $("#bookingForm");
-bookingForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const btn = bookingForm.querySelector('button[type="submit"]');
-  const txt = btn.textContent;
-  btn.textContent = "Sending...";
-  btn.disabled = true;
-  
-  const formData = new FormData(bookingForm);
-  const name = formData.get("name");
-  const date = formData.get("date");
-  const time = formData.get("time");
-  const guests = formData.get("guests");
-  
-  const bookingText = `NEW BOOKING 📅\nName: ${name}\nDate: ${date}\nTime: ${time}\nGuests: ${guests}`;
-
-  formData.append("_captcha", "false");
-  formData.append("_subject", "New Table Reservation");
-
-  try {
-    const res = await fetch(`https://formsubmit.co/ajax/${RESTAURANT_EMAIL}`, {
-      method: "POST", body: formData, headers: { "Accept": "application/json" }
-    });
-    
-    if (res.ok) {
-        sendSilentWhatsApp(bookingText);
-        $("#formContainer").style.display = "none";
-        $("#successMessage").style.display = "block";
-    } else {
-        throw new Error("Email failed");
-    }
-  } catch (err) {
-    alert("Error sending booking. Please call us.");
-    btn.textContent = txt;
-    btn.disabled = false;
-  }
-});
-$("#bookAnother").addEventListener("click", () => location.reload());
-$("#closeSuccess").addEventListener("click", () => location.reload());
-
-// =========================
-// Load Static Reviews
-// =========================
-function loadStaticReviews() {
-  const listEl = $("#googleReviews");
-  const frag = document.createDocumentFragment();
-  if (typeof REVIEWS_DATA !== 'undefined') {
-    REVIEWS_DATA.forEach(rv => {
-      const div = document.createElement("div");
-      div.className = "review";
-      div.innerHTML = `<strong>${rv.author}</strong><div style="color:var(--color-accent);margin-top:.25rem">${"⭐".repeat(rv.rating)}</div><p>${rv.text}</p><small>${rv.time}</small>`;
-      frag.appendChild(div);
-    });
-  }
-  setTimeout(() => { listEl.innerHTML = ""; listEl.appendChild(frag); }, 800);
 }
-loadStaticReviews();
 
-// =========================
-// Back To Top
-// =========================
+const bookingForm = $("#bookingForm");
+if(bookingForm) {
+    bookingForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = bookingForm.querySelector('button[type="submit"]');
+      const txt = btn.textContent;
+      btn.textContent = "Sending...";
+      btn.disabled = true;
+      
+      const formData = new FormData(bookingForm);
+      const name = formData.get("name");
+      const date = formData.get("date");
+      const time = formData.get("time");
+      const guests = formData.get("guests");
+      const phone = formData.get("phone");
+      
+      const bookingText = `NEW BOOKING 📅\nName: ${name}\nPhone: ${phone}\nDate: ${date}\nTime: ${time}\nGuests: ${guests}`;
+      formData.append("_captcha", "false");
+      formData.append("_subject", "New Table Reservation");
+
+      try {
+        const res = await fetch(`https://formsubmit.co/ajax/${RESTAURANT_EMAIL}`, {
+          method: "POST", body: formData, headers: { "Accept": "application/json" }
+        });
+        
+        if (res.ok) {
+            sendSilentWhatsApp(bookingText);
+            $("#formContainer").style.display = "none";
+            $("#successMessage").style.display = "block";
+        } else {
+            throw new Error("Email failed");
+        }
+      } catch (err) {
+        alert("Error sending booking. Please call us.");
+        btn.textContent = txt;
+        btn.disabled = false;
+      }
+    });
+}
+if($("#bookAnother")) $("#bookAnother").addEventListener("click", () => location.reload());
+if($("#closeSuccess")) $("#closeSuccess").addEventListener("click", () => location.reload());
+
 const backToTopBtn = document.getElementById("backToTop");
 if (backToTopBtn) {
   window.addEventListener("scroll", () => {
@@ -469,12 +493,283 @@ if (backToTopBtn) {
 }
 
 // =========================
-// Initialization
+// SMART DATE & TIME LOGIC
 // =========================
-renderOffers();
-renderCategories();
-renderMenu();
-if (cart.length) updateCartUI();
-$("#year").textContent = String(new Date().getFullYear());
-checkRestaurantStatus();
-setInterval(checkRestaurantStatus, 60000);
+function checkRestaurantStatus() {
+  const now = new Date();
+  const day = now.getDay(); 
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const currentTime = hour + (minute / 60);
+  const badge = document.getElementById("statusBadge");
+  const text = document.getElementById("statusText");
+
+  let isOpen = false;
+  // Mon: Closed | Tue-Fri: 17-22 | Sat-Sun: 12-14 & 17-22
+  if (day === 1) isOpen = false;
+  else if (day >= 2 && day <= 5) {
+    if (currentTime >= 17 && currentTime < 22) isOpen = true;
+  } else {
+    if ((currentTime >= 12 && currentTime < 14) || (currentTime >= 17 && currentTime < 22)) isOpen = true;
+  }
+
+  if(badge && text) {
+      badge.classList.remove("loading", "open", "closed");
+      if (isOpen) { badge.classList.add("open"); text.textContent = "Open Now"; } 
+      else { badge.classList.add("closed"); text.textContent = "Closed"; }
+  }
+}
+
+function generateTimeSlots(dateInput) {
+  let dateObj;
+  // Create date object (ensure it parses correctly)
+  // We add T12:00:00 to avoid timezone issues shifting the day
+  if (dateInput) {
+      dateObj = new Date(dateInput + "T12:00:00");
+  } else {
+      dateObj = new Date();
+  }
+
+  // Check if date is valid
+  if (isNaN(dateObj.getTime())) return [];
+
+  const day = dateObj.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+  const slots = [];
+
+  // 1. Weekend Lunch (Sat & Sun)
+  if (day === 0 || day === 6) {
+      const lunchSlots = ["12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45"];
+      slots.push(...lunchSlots);
+  }
+
+  // 2. Dinner (All days except Monday)
+  if (day !== 1) { 
+      const startHour = 17; // 5 PM
+      const endHour = 22;   // 10 PM
+      for (let h = startHour; h < endHour; h++) {
+        for (let m = 0; m < 60; m += 15) {
+          const timeStr = `${h}:${m === 0 ? '00' : m}`;
+          slots.push(timeStr);
+        }
+      }
+  }
+  
+  return slots;
+}
+
+function updateDropdown(selectElement, dateValue) {
+    if (!selectElement) return;
+
+    const timeOptions = generateTimeSlots(dateValue);
+    
+    // Clear old options
+    selectElement.innerHTML = '<option value="" disabled selected>Select Time</option>';
+    
+    if (timeOptions.length === 0) {
+         const opt = document.createElement("option");
+         opt.textContent = "Closed on this day";
+         opt.disabled = true;
+         selectElement.appendChild(opt);
+    } else {
+        timeOptions.forEach(time => {
+            const opt = document.createElement("option");
+            opt.value = time;
+            opt.textContent = time;
+            selectElement.appendChild(opt);
+        });
+    }
+}
+
+/* =========================================
+   Feature: FOMO Social Proof (Smart Open/Closed Logic)
+   ========================================= */
+
+function startFomo() {
+    if (typeof menuData === 'undefined' || menuData.length === 0) return;
+    const toast = document.getElementById('fomo-toast');
+    if (!toast) return;
+
+    const locations = [
+        "Swindon", "Rodbourne", "Old Town", "Stratton", 
+        "West Swindon", "Cirencester", "Royal Wootton Bassett"
+    ];
+
+    const openActions = ["just ordered", "is checking out with", "added to cart:", "is viewing the"];
+    const closedActions = ["recently ordered", "rated 5 stars:", "recommends the", "loved the"];
+
+    function isRestaurantOpen() {
+        const now = new Date();
+        const day = now.getDay(); 
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+        const time = hour + (minute / 60);
+
+        if (day === 1) return false; 
+        if (day >= 2 && day <= 5) { return (time >= 17 && time < 22); }
+        if (day === 6 || day === 0) { return (time >= 12 && time < 14) || (time >= 17 && time < 22); }
+        return false;
+    }
+
+    function showNotification() {
+        const isOpen = isRestaurantOpen();
+        const randomItem = menuData[Math.floor(Math.random() * menuData.length)];
+        const randomLoc = locations[Math.floor(Math.random() * locations.length)];
+        
+        let action, timeText;
+
+        if (isOpen) {
+            action = openActions[Math.floor(Math.random() * openActions.length)];
+            const mins = Math.floor(Math.random() * 9) + 1;
+            timeText = `${mins} mins ago`;
+        } else {
+            action = closedActions[Math.floor(Math.random() * closedActions.length)];
+            const pastOptions = ["Yesterday", "Last night", "2 days ago"];
+            timeText = pastOptions[Math.floor(Math.random() * pastOptions.length)];
+        }
+
+        toast.innerHTML = `
+            <div class="fomo-icon">TB</div>
+            <div>
+                <strong>Someone in ${randomLoc}</strong>
+                <span>${action} <b>${randomItem.name}</b> <br>
+                <small style="color:#888; font-size:10px;">${timeText}</small></span>
+            </div>
+        `;
+
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('visible'), 10);
+        setTimeout(() => {
+            toast.classList.remove('visible');
+            setTimeout(() => toast.classList.add('hidden'), 500); 
+        }, 5000);
+    }
+
+    let count = 0; 
+    const MAX_SHOWS = 3;
+
+    function runSequence() {
+        if (count >= MAX_SHOWS) return; 
+        showNotification();
+        count++;
+    }
+
+    setTimeout(() => {
+        runSequence();
+        setInterval(runSequence, 60000); 
+    }, 10000);
+}
+
+/* =========================================
+   Feature: Airbnb-Style Guest Counter
+   ========================================= */
+const GUEST_AVATARS = ["👨", "👩", "🧑", "👧", "👦", "👵", "👴", "👱", "👲", "🧕", "👮", "👷", "💂"];
+
+function initGuestWidget() {
+    console.log("👥 Initializing Guest Widget...");
+    const visualContainer = document.getElementById('guest-visuals');
+    const displayNum = document.getElementById('guestCountDisplay');
+    const hiddenInput = document.getElementById('guestsInput');
+    const btnPlus = document.getElementById('guestPlus');
+    const btnMinus = document.getElementById('guestMinus');
+    
+    if(!visualContainer || !displayNum || !btnPlus || !btnMinus) {
+        console.warn("⚠️ Guest widget elements not found.");
+        return;
+    }
+
+    let currentCount = 2; 
+    const MIN_GUESTS = 1;
+    const MAX_GUESTS = 20;
+
+    function updateDisplay() {
+        displayNum.textContent = currentCount;
+        hiddenInput.value = currentCount;
+        visualContainer.innerHTML = ''; 
+        for (let i = 0; i < currentCount; i++) {
+            const span = document.createElement('span');
+            span.className = 'guest-char';
+            const avatarIndex = i % GUEST_AVATARS.length;
+            span.textContent = GUEST_AVATARS[avatarIndex];
+            span.style.animationDelay = `${i * 0.05}s`;
+            visualContainer.appendChild(span);
+        }
+        btnMinus.disabled = (currentCount <= MIN_GUESTS);
+        btnPlus.disabled = (currentCount >= MAX_GUESTS);
+    }
+
+    btnPlus.addEventListener('click', () => {
+        if (currentCount < MAX_GUESTS) { currentCount++; updateDisplay(); }
+    });
+
+    btnMinus.addEventListener('click', () => {
+        if (currentCount > MIN_GUESTS) { currentCount--; updateDisplay(); }
+    });
+
+    updateDisplay();
+}
+
+// =========================
+// INITIALIZATION (Robust)
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("🚀 App Initialized");
+
+    // 1. Setup Booking Form Date/Time Logic
+    // We use querySelector to find the input even if ID is missing
+    const bookingDateInput = document.getElementById("bookingDate") || document.querySelector('input[name="date"]');
+    const bookingTimeSelect = document.getElementById("bookingTime") || document.querySelector('select[name="time"]');
+
+    if (bookingDateInput && bookingTimeSelect) {
+        console.log("✅ Booking form inputs found");
+        
+        // Set default date to TODAY
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayISO = `${yyyy}-${mm}-${dd}`; 
+
+        bookingDateInput.value = todayISO;
+        bookingDateInput.min = todayISO; // Disable past dates
+        
+        // Populate immediately
+        updateDropdown(bookingTimeSelect, todayISO);
+
+        // Update when user changes date
+        bookingDateInput.addEventListener("change", (e) => {
+            console.log("📅 Date changed to:", e.target.value);
+            updateDropdown(bookingTimeSelect, e.target.value);
+        });
+    } else {
+        console.warn("⚠️ Could not find Booking Date/Time inputs. Check index.html IDs.");
+    }
+
+    // 2. Setup Order Form Time Logic
+    const orderTimeSelect = document.getElementById("orderTime");
+    if(orderTimeSelect) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        updateDropdown(orderTimeSelect, `${yyyy}-${mm}-${dd}`);
+    }
+
+    // 3. Start Features
+    renderOffers();
+    refreshApp(); 
+    loadStaticReviews();
+    if (typeof cart !== 'undefined' && cart.length) updateCartUI();
+    const yearEl = document.getElementById("year");
+    if(yearEl) yearEl.textContent = String(new Date().getFullYear());
+    
+    checkRestaurantStatus();
+    setInterval(checkRestaurantStatus, 60000);
+    
+    // Trigger Data Fetch
+    fetchAllData();
+    
+    // Start FOMO & Guest Widget
+    startFomo();
+    initGuestWidget();
+});
