@@ -1051,3 +1051,29 @@ input[type="time"].control {
   background: var(--bg-body);
   white-space: nowrap;
 }
+
+/* =========================================
+   FIX: iOS Date Input Styling
+   ========================================= */
+input[type="date"].control,
+input[type="time"].control {
+  /* Force text to align left like other inputs */
+  text-align: left;
+  
+  /* Remove native iOS rounded styling */
+  -webkit-appearance: none;
+  appearance: none;
+  
+  /* Ensure consistent height with text inputs */
+  min-height: 54px; 
+  display: block;
+  
+  /* Fix text color opacity on iOS */
+  opacity: 1; 
+  color: var(--color-primary);
+}
+
+/* Ensure the placeholder/calendar icon behaves */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
