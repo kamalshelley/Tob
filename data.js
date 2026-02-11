@@ -10,11 +10,11 @@
 const SPECIAL_OFFERS = [
   {
     title: "WEEKEND LUNCH SPECIAL",
-    description: "Sat & Sun (12:00 - 15:00): Chef's Biryani Combos from £6.50."
+    description: "Fri to Sun (12:00 - 15:00): Chef's Biryani Combos from £6.50."
   },
   {
     title: "THALI FEAST",
-    description: "Sat & Sun (12:00 - 15:00): Veg, Non-Veg & Seafood Thalis from £10.99."
+    description: "Fri to Sun (12:00 - 15:00): Veg, Non-Veg & Seafood Thalis from £10.99."
   },
   {
     title: "EAT IN OFFER",

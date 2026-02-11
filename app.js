@@ -504,13 +504,13 @@ function checkRestaurantStatus() {
   const badge = document.getElementById("statusBadge");
   const text = document.getElementById("statusText");
 
-  let isOpen = false;
-  // Mon: Closed | Tue-Fri: 17-22 | Sat-Sun: 12-14 & 17-22
-  if (day === 1) isOpen = false;
-  else if (day >= 2 && day <= 5) {
+ let isOpen = false;
+  if (day === 1) { // Monday
+    isOpen = false;
+  } else if (day >= 2 && day <= 4) { // Tue - Thu
     if (currentTime >= 17 && currentTime < 22) isOpen = true;
-  } else {
-    if ((currentTime >= 12 && currentTime < 14) || (currentTime >= 17 && currentTime < 22)) isOpen = true;
+  } else { // Fri (5), Sat (6), Sun (0)
+    if ((currentTime >= 12 && currentTime < 15) || (currentTime >= 17 && currentTime < 22)) isOpen = true;
   }
 
   if(badge && text) {
@@ -536,24 +536,20 @@ function generateTimeSlots(dateInput) {
   const day = dateObj.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
   const slots = [];
 
-  // 1. Weekend Lunch (Sat & Sun)
-  if (day === 0 || day === 6) {
-      const lunchSlots = ["12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45"];
+// 1. Lunch Slots (Fri, Sat & Sun) - Now includes Friday (5)
+  if (day === 0 || day === 6 || day === 5) {
+      const lunchSlots = ["12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45"];
       slots.push(...lunchSlots);
   }
 
   // 2. Dinner (All days except Monday)
   if (day !== 1) { 
-      const startHour = 17; // 5 PM
-      const endHour = 22;   // 10 PM
-      for (let h = startHour; h < endHour; h++) {
+      for (let h = 17; h < 22; h++) {
         for (let m = 0; m < 60; m += 15) {
-          const timeStr = `${h}:${m === 0 ? '00' : m}`;
-          slots.push(timeStr);
+          slots.push(`${h}:${m === 0 ? '00' : m}`);
         }
       }
   }
-  
   return slots;
 }
 
